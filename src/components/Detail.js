@@ -1,39 +1,60 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-
+import { useParams } from 'react-router-dom'
+import db from '../firebase'
 
 function Detail() {
+    const { id } = useParams()
+    const [movie, setMovie] = useState()
+
+
+    useEffect(() => {
+        db.collection("movies")
+            .doc(id)
+            .get()
+            .then((doc) => {
+                if (doc.exists) {
+                    setMovie(doc.data())
+                } else {
+
+                }
+            })
+    }, [])
+
+    console.log(movie)
     return (
         <Container>
-            <Background>
-                <img src="https://images.unsplash.com/photo-1597278756231-88c915e29a4e?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aGQlMjB3YWxscGFwZXJ8ZW58MHx8MHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=60" alt="" />
-            </Background>
-            <ImageTitle>
-                <img src="https://images.unsplash.com/photo-1615413250263-bb04cc0a3988?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTB8fHBpeGFyfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=60" alt="" />
-            </ImageTitle>
-            <Controls>
-                <PlayButton>
-                    <img src="/images/play-icon-black.png" alt="" />
-                    <span>PLAY</span>
-                </PlayButton>
-                <TrailerButton>
-                    <img src="/images/play-icon-white.png" alt="" />
-                    <span>TRAILER</span>
-                </TrailerButton>
-                <AddButton>
-                    +
-                </AddButton>
-                <GroupWatchButton>
-                    <img src="/images/group-icon.png"/>
-                </GroupWatchButton>
+            {movie && <>
+                <Background>
+                    <img src={movie.backgroundImg} alt="" />
+                </Background>
+                <ImageTitle>
+                    <img src={movie.titleImg} alt="" />
+                </ImageTitle>
+                <Controls>
+                    <PlayButton>
+                        <img src="/images/play-icon-black.png" alt="" />
+                        <span>PLAY</span>
+                    </PlayButton>
+                    <TrailerButton>
+                        <img src="/images/play-icon-white.png" alt="" />
+                        <span>TRAILER</span>
+                    </TrailerButton>
+                    <AddButton>
+                        +
+                    </AddButton>
+                    <GroupWatchButton>
+                        <img src="/images/group-icon.png" />
+                    </GroupWatchButton>
 
-            </Controls>
-            <SubTitle>
-                2018 . 7m . Family, Fantasy, Kids, Animation
-            </SubTitle>
-            <Description>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum eveniet, unde quam magni beatae atque similique exercitationem, voluptas, mollitia debitis itaque aspernatur obcaecati commodi facilis. Minima necessitatibus, recusandae dolor aliquid voluptatum dolores quaerat laborum voluptates, perferendis voluptatem id iure magnam.
-            </Description>
+                </Controls>
+                <SubTitle>
+                    {movie.subTitle}
+                </SubTitle>
+                <Description>
+                    {movie.description}
+                </Description>
+            </>}
         </Container>
     )
 }
@@ -78,7 +99,7 @@ const ImageTitle = styled.div`
 const Controls = styled.div`
     display: flex;
     align-items: center;
-`   
+`
 
 const PlayButton = styled.button`
     border-radius: 4px;
